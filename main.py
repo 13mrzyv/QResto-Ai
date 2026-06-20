@@ -95,5 +95,5 @@ Qaydalar:
             {"role": "user", "content": f"Sual: {sual}\nNəticə: {satirlar}"}
         ]
     )
-
+    #""
     return {"cavab": izah.choices[0].message.content, "sql": sql}
