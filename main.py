@@ -7,6 +7,7 @@ from examples import EXAMPLES
 from validator import sql_yoxla
 import os
 import pyodbc
+from rag import find_closest_examples, prepare_example_vectors
 
 load_dotenv()
 
@@ -32,6 +33,10 @@ def mehsul_adlarini_al():
     conn.close()
     return ", ".join(adlar)
 
+@app.on_event("startup")
+def startup_event():
+    prepare_example_vectors()
+
 @app.get("/")
 def index():
     return {"status": "QResto AI işləyir!"}
@@ -42,6 +47,12 @@ def sual_ver(data: dict):
     tarix = data.get("tarix", [])
     kontekst = "\n".join(tarix) if tarix else ""
     mehsul_siyahisi = mehsul_adlarini_al()
+
+    yaxin_numuneler = find_closest_examples(sual, count=3)
+    numune_metni = "\n\n".join([
+        f"Sual: {n['sual']}\nSQL: {n['sql']}" for n in yaxin_numuneler
+    ])
+
 
     cavab = client_ai.chat.completions.create(
         model="gpt-4o-mini",
@@ -65,7 +76,7 @@ Qaydalar:
 
 {SCHEMA}
 
-{EXAMPLES}"""},
+{numune_metni}"""},
             {"role": "user", "content": sual}
         ]
     )

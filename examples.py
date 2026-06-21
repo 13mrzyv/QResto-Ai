@@ -49,3 +49,46 @@ Nümunə 11 (zaman aralığı):
 Sual: Son 10 gündə ən çox satılan məhsul hansıdır?
 SQL: SELECT TOP 1 P.Name, SUM(OI.Quantity) as Total FROM OrderItems OI JOIN Products P ON OI.ProductId = P.Id WHERE OI.OrderDate >= DATEADD(DAY, -10, GETDATE()) GROUP BY P.Name ORDER BY Total DESC
 """
+
+NUMUNELER_LIST = [
+    {
+        "sual": "Bugün neçə latte satılıb?",
+        "sql": "SELECT SUM(OI.Quantity) as Total FROM OrderItems OI JOIN Products P ON OI.ProductId = P.Id WHERE P.Name LIKE '%latte%' AND CAST(OI.OrderDate AS DATE) = CAST(GETDATE() AS DATE)"
+    },
+    {
+        "sual": "Bu ay ən çox satılan məhsul hansıdır?",
+        "sql": "SELECT TOP 1 P.Name, SUM(OI.Quantity) as Total FROM OrderItems OI JOIN Products P ON OI.ProductId = P.Id WHERE MONTH(OI.OrderDate) = MONTH(GETDATE()) AND YEAR(OI.OrderDate) = YEAR(GETDATE()) GROUP BY P.Name ORDER BY Total DESC"
+    },
+    {
+        "sual": "Bugünkü ümumi gəlir nə qədərdir?",
+        "sql": "SELECT SUM(TotalAmount) as UmumiGelir FROM Orders WHERE CAST(OrderDate AS DATE) = CAST(GETDATE() AS DATE) AND Status = 2"
+    },
+    {
+        "sual": "Hal hazırda neçə masa doludur?",
+        "sql": "SELECT COUNT(*) as DoluMasalar FROM Tables WHERE Status = 1"
+    },
+    {
+        "sual": "Bu həftə ən çox satılan 5 məhsul hansılardır?",
+        "sql": "SELECT TOP 5 P.Name, SUM(OI.Quantity) as Total FROM OrderItems OI JOIN Products P ON OI.ProductId = P.Id WHERE OI.OrderDate >= DATEADD(DAY, -7, GETDATE()) GROUP BY P.Name ORDER BY Total DESC"
+    },
+    {
+        "sual": "Bugünkü xərclər nə qədərdir?",
+        "sql": "SELECT SUM(Amount) as UmumiXerc FROM Expenses WHERE CAST(ExpenseDate AS DATE) = CAST(GETDATE() AS DATE)"
+    },
+    {
+        "sual": "Ən bahalı məhsul hansıdır?",
+        "sql": "SELECT TOP 1 Name, Price FROM Products WHERE IsDeleted = 0 ORDER BY Price DESC"
+    },
+    {
+        "sual": "Bu ay neçə sifariş olub?",
+        "sql": "SELECT COUNT(*) as Sifarisler FROM Orders WHERE MONTH(OrderDate) = MONTH(GETDATE()) AND YEAR(OrderDate) = YEAR(GETDATE())"
+    },
+    {
+        "sual": "Bugün San Sebastian neçə ədəd satılıb?",
+        "sql": "SELECT P.Name, SUM(OI.Quantity) as Total FROM OrderItems OI JOIN Products P ON OI.ProductId = P.Id WHERE P.Name LIKE '%San Sebastian%' AND CAST(OI.OrderDate AS DATE) = CAST(GETDATE() AS DATE) GROUP BY P.Name"
+    },
+    {
+        "sual": "Latte neçə fərqli masada sifariş edilib?",
+        "sql": "SELECT COUNT(DISTINCT O.TableId) as Total FROM OrderItems OI JOIN Products P ON OI.ProductId = P.Id JOIN Orders O ON OI.OrderId = O.Id WHERE P.Name LIKE '%latte%'"
+    },
+]
